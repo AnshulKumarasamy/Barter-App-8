@@ -1,23 +1,12 @@
 import { Icon, Header, Card } from 'react-native-elements';
 import firebase from 'firebase';
 import React, { Component } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    Modal,
-    KeyboardAvoidingView,
-    StyleSheet,
-    TouchableOpacity,
-    Alert,
-    ScrollView
-} from 'react-native';
+import { View, Text, TextInput, Modal, KeyboardAvoidingView, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import db from '../config';
 
 export default class RecieverDetails extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             userId: firebase.auth().currentUser.email,
             recieverId: this.props.navigation.getParam['details']['user_id'],
@@ -55,11 +44,24 @@ export default class RecieverDetails extends Component {
 
     updateItemStatus=()=>{
         db.collection('all_donations').add({
-            book_name:this.state.itemName,
+            item_name:this.state.itemName,
             request_id:this.state.requestId,
             requested_by:this.state.recieverName,
             donor_id:this.state.userId,
             request_status:"Donor Intrested"
+        })
+    }
+
+    addNotification=()=>{
+        var message = this.state.userName + " has shown interest in donating the item";
+        db.collection("all_notifications").add({
+            "targeted_user_id": this.state.recieverId,
+            "donor_id": this.state.userId,
+            "request_id": this.state.requestId,
+            "item_name": this.state.itemName,
+            "date": firebase.firestore.FieldValue.serverTimestamp(),
+            "notification_status":"unread",
+            "message": message
         })
     }
 
